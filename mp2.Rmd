@@ -19,4 +19,25 @@ load("contributions.rda")
 library(tidyverse)
 library(ggplot2)
 ```
+```{r}
+glimpse(house_elections)
+glimpse(candidates)
+glimpse(committees)
+glimpse(contributions)
+```
+```{r}
+candID <- candidates %>%
+  select(cand_id, cand_name) 
+commitID <- committees %>%
+  select(cmte_id, cmte_name)
 
+cont <- contributions %>%
+  filter(entity_type == "PAC") %>%
+  select(cmte_id, transaction_amt, cand_id, state) %>%
+  inner_join(candID, by="cand_id") %>%
+  inner_join(commitID, by="cmte_id") %>%
+  arrange(desc(transaction_amt))
+
+  
+
+```
