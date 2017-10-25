@@ -26,18 +26,34 @@ glimpse(committees)
 glimpse(contributions)
 ```
 ```{r}
+##getting data
 candID <- candidates %>%
   select(cand_id, cand_name) 
 commitID <- committees %>%
   select(cmte_id, cmte_name)
 
-cont <- contributions %>%
+pac <- contributions %>%
   filter(entity_type == "PAC") %>%
   select(cmte_id, transaction_amt, cand_id, state) %>%
   inner_join(candID, by="cand_id") %>%
   inner_join(commitID, by="cmte_id") %>%
   arrange(desc(transaction_amt))
 
-  
+```
 
+```{r}
+##top 10 transaction amounts by PAC and candidate they gave to  
+pac1<-pac %>%
+  group_by(cmte_name,cand_name) %>%
+  summarize(transactionsum = sum(transaction_amt)) %>%
+  arrange(desc(transactionsum)) %>%
+  head(10)
+```
+
+```{r}
+##plot showing top 10 transactions by PAC and candidate they gave to
+
+p<-ggplot(pac1,aes(x = cmte_name, y =transactionsum))+
+  geom_bar(stat="identity", aes(fill= cand_name))
+p
 ```
