@@ -14,9 +14,41 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+load("individuals.rda")
 ```
 ```{r}
 library(tidyverse)
 library(ggplot2)
+```
+```{r}
+glimpse(contributions)
+```
+```{r}
+candidatespac<-candidates %>% 
+  select(cand_id,cand_name,cand_party_affiliation)
+committeespac<-committees %>% 
+  select(cmte_id,cmte_name,cmte_party_affiliation,connected_org_name)
+```
+```{r}
+pac<-contributions %>% 
+  filter(entity_type =="PAC") %>% 
+  select(cmte_id,transaction_amt,transaction_pgi,cand_id) %>% 
+  left_join(candidatespac, by=('cand_id' = 'cand_id')) %>% 
+  left_join(committeespac, by = ("cmte_id" = "cmte_id"))
+  
+```
+
+
+```{r}
+pac1<-pac %>% 
+  group_by(cmte_name,cand_name) %>% 
+  summarize(transactionsum = sum(transaction_amt)) %>% 
+  arrange(desc(transactionsum)) %>% 
+  head(10)
+```
+```{r}
+p<-ggplot(pac1,aes(x = cmte_name, y =transactionsum))+
+  geom_bar(stat= "identity",aes(fill= cand_name))
+p
 ```
 
