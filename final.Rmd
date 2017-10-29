@@ -1,0 +1,72 @@
+---
+title: "mp2-final"
+author: "Yi Ning"
+date: "10/29/2017"
+output: html_document
+---
+
+```{r, include=FALSE}
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+```
+```{r MESSAGE = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+library(gridExtra)
+```
+```{r}
+##getting data
+candID <- candidates %>%
+  select(cand_id, cand_name) 
+commitID <- committees %>%
+  select(cmte_id, cmte_name)
+```
+```{r}
+find_pac_data<-function(pgi,entity,num = 20){
+  pac<-contributions %>%
+    filter(entity_type == entity, transaction_pgi==pgi, transaction_type!= "24A") %>%
+    mutate(transaction_amt = as.integer(transaction_amt)) %>% 
+    select(cmte_id, transaction_amt, cand_id) %>%
+    inner_join(candID, by="cand_id") %>%
+    inner_join(commitID, by="cmte_id") %>%
+    arrange(desc(transaction_amt)) 
+
+top10cmte<- pac %>% 
+  group_by(cmte_name) %>% 
+  summarize(transactionsum = sum(transaction_amt)) %>% 
+  arrange(desc(transactionsum)) %>% 
+  head(10)
+topcmtecontribution<- pac %>% 
+  filter(cmte_name %in% top10cmte$cmte_name) %>% 
+  group_by(cand_name, cmte_name) %>% 
+  summarize(transactionsum = sum(transaction_amt)) %>% 
+  arrange(desc(transactionsum)) %>% 
+  head(num)
+p<-ggplot(topcmtecontribution,aes(x = reorder(cand_name, transactionsum), y = transactionsum, fill = cmte_name))+
+  geom_bar(stat="identity") +
+  scale_fill_discrete(name = "Committee Name")+
+  scale_y_continuous(labels = scales::comma)+
+  xlab("Candidates")+
+  ylab("Contributions")+
+  ggtitle(paste("Contributions by Top 10 ",entity,"s to Top 10 2012 Election Candidates (type:",pgi,")", sep=""))+
+  theme(legend.position = "bottom")+
+  coord_flip()
+  
+return(p)
+}
+```
+```{r}
+p<-find_pac_data("G","PAC")
+
+p1<-find_pac_data("P","PAC")
+
+p2<-find_pac_data("G","CCM")
+
+p3<-find_pac_data("P","CCM")
+
+```
+```{r}
+grid.arrange(p,p1,p2,p3)
+```
