@@ -80,10 +80,10 @@ p3<-find_pac_data("P","CCM")
 #plot 4 plots on one page
 grid.arrange(p,p1,p2,p3, ncol =2)
 ```
-
-
-
+From the four plots, we can see the top 20 candidates who received the most contrubutions by Political Action Committees and Candidate Committees, both for the primary and general elections. As shown in the first plot, Obama received the most contributions from PACs in the general election, with two PACs making up all of his contributions. The four plots show how there were a small number of PACs and CCMs compared to the large candidate population that made up most of the contributions. For example, there were only four PACs that made up all of the contributions to the top 20 candidates who recevied the most in the general election. In addition, separating the data by committee type shows how PACs and CCMs contributed to different sets of candidates in both the general and the primary elections. Obama appears as the top receiver of contributions from PACs but he is not in the top 20 candidate list for contributions made by CCMs.  
 
 Sources:
 http://classic.fec.gov/finance/disclosure/metadata/DataDictionaryContributionstoCandidates.shtml 
+
+
 
