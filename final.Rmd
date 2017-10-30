@@ -12,7 +12,7 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
-```{r message =FALSE}
+```{r message =FALSE, eval='hide'}
 library(tidyverse)
 library(ggplot2)
 library(ggthemes)
@@ -59,10 +59,10 @@ p<-ggplot(topcmtecontribution,aes(x = reorder(cand_name, transactionsum), y = tr
   scale_y_continuous(labels = scales::comma)+
   xlab("Candidates")+
   ylab("Contributions")+
-  ggtitle(paste("Contributions by Top 10 ",entity,"s to Top 10 2012 Election Candidates (type:",pgi,")", sep=""))+
-  theme(legend.position = "bottom")+
-  coord_flip()
-  
+  ggtitle(paste("Contributions by Top 10 ",entity,"s to \n Top 10 2012 Election Candidates (type:",pgi,")", sep=""))+
+  theme(legend.position = "bottom", plot.title=element_text(size=12, hjust=0.5))+
+  coord_flip()+
+  guides(fill=guide_legend(ncol=1,bycol=TRUE))
 return(p)
 }
 ```
@@ -97,6 +97,7 @@ romney<-contributions %>%
   
 ```
 ```{r}
+
 #Curious about Romeny's spending type
 ggplot(romney,aes(x = reorder(transaction_type,transactionsum), y = transactionsum, fill= cmte_name))+
   geom_bar(stat = 'identity')+
@@ -105,13 +106,11 @@ ggplot(romney,aes(x = reorder(transaction_type,transactionsum), y = transactions
   xlab("Transaction Type")+
   ylab("Contributions")+
   ggtitle('The breakdown of PAC transactions to Romney by transaction type')+
-  theme(legend.position = "bottom")+
+  theme(legend.position = "bottom", plot.title=element_text(size=12, hjust=0.5))+
+  guides(fill=guide_legend(ncol = 1, bycol=TRUE))+
   coord_flip()
-  
 ```
 
-=======
->>>>>>> 887446a1a6246389e8051d6daaa0b6f1c3dc3e3c
 From the four plots, we can see the top 20 candidates who received the most contrubutions by Political Action Committees and Candidate Committees, both for the primary and general elections. As shown in the first plot, Obama received the most contributions from PACs in the general election, with two PACs making up all of his contributions. The four plots show how there were a small number of PACs and CCMs compared to the large candidate population that made up most of the contributions. For example, there were only four PACs that made up all of the contributions to the top 20 candidates who recevied the most in the general election. In addition, separating the data by committee type shows how PACs and CCMs contributed to different sets of candidates in both the general and the primary elections. Obama appears as the top receiver of contributions from PACs but he is not in the top 20 candidate list for contributions made by CCMs.  
 
 Sources:
